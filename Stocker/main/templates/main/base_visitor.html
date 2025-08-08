@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:slnt,wght@-11..11,200..1000&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+    <style>
+        :root { 
+        
+        /* 🏷️ 1 Group */
+        /* 🎨 Jaffa */
+        --jaffa-800: #3c0f0a; /* 800 */
+        --jaffa-700: #4d190f; /* 700 */
+        --jaffa-500: #79321d; /* 500 */
+        --jaffa-300: #ae512d; /* 300 */
+        --jaffa-90: #dc6f3b; /* 90 */
+        --jaffa-80: #F48043; /* 80 */
+        --jaffa-50: #f7af85; /* 50 */
+        --jaffa-40: #f9cba8; /* 40 */
+        --jaffa-30: #fadab9; /* 30 */
+        --jaffa-20: #fbe6c9; /* 20 */
+        --jaffa-10: #fdf5e8; /* 10 */
+
+        /* 🎨 Dune */
+        --dune-900: #070605; /* 900 */
+        --dune-700: #25211f; /* 700 */
+        --dune-700-1: #2D2A26; /* 700-1 */
+        --dune-300: #5a5855; /* 300 */
+        --dune-100: #7c7a77; /* 100 */
+        --dune-80: #969593; /* 80 */
+        --dune-60: #abaaa8; /* 60 */
+        --dune-50: #c0bfbd; /* 50 */
+        --dune-30: #d6d6d5; /* 30 */
+        --dune-10: #f3f3f2; /* 10 */
+
+        --gray-darker: #333;
+        --gray-dark: #EAEAEA;
+        --gray-background: #FAFAFA;
+    }
+    </style>
+</head>
+<body class="font-[Cairo] min-h-screen flex flex-col">
+    <img class="-z-10" src="{% static 'images/shape03.svg' %}">  
+    {% include 'main/components/messages.html' %}
+    <main class="flex-grow w-full self-center content-center">
+    {% block content %}
+    {% endblock %}
+    </main>
+    
+    <div class="bg-[--gray-background] border border-t-[--gray-dark] mt-10">
+        <footer class="w-[90%] place-self-center py-8 justify-items-center">
+            <div class="flex md:flex-row flex-col justify-start md:justify-between">
+                <div class="flex flex-col place-self-center gap-4">
+                    <p class="text-[--gray-darker]">© 2025 Stocker. All Rights Reserved.</p>
+                </div>
+                <nav class="my-4 content-center">
+                    <ul class="flex md:flex-row flex-col place-self-center gap-4 text-white">
+                    </ul>
+                </nav>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>

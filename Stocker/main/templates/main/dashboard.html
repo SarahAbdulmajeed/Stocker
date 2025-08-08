@@ -1,0 +1,9 @@
+{% extends 'main/base_emp.html'%}
+{% block content %}
+    {% if request.user.is_authenticated %} 
+    here is the dashboard 
+    <br>
+    {{request.user.username}}
+    {% endif %}
+{% endblock %}
+
