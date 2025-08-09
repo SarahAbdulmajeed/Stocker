@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 class Supplier(models.Model):
     name = models.CharField(max_length=1024, unique=True)
+    mobile = models.CharField(max_length=20, blank=True) 
+    email = models.EmailField(max_length=254, blank=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
