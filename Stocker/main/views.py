@@ -5,6 +5,7 @@ from django.contrib.auth.decorators	import login_required
 from .models import Category, Supplier, Product, StockEntry
 from .forms import CategoryForm, SupplierForm, ProductForm, StockEntryForm
 from django.core.paginator import Paginator 
+from django.db.models import Sum
 
 
 
@@ -97,6 +98,9 @@ def delete_supplier(request: HttpRequest, supplier_id):
 #===========[Product]===========
 def products_view(request: HttpRequest):
 	products = Product.objects.all()
+	products = Product.objects.annotate(total_qty=Sum('stockentry__quantity')
+)
+
 	total_products = products.count()
 	page_number = request.GET.get("page",1)
 	paginator = Paginator(products,7)
@@ -106,7 +110,7 @@ def products_view(request: HttpRequest):
 def add_product(request: HttpRequest):
 	categories = Category.objects.all()
 	if request.method == "POST":
-		product_form = ProductForm(request.POST)
+		product_form = ProductForm(request.POST, request.FILES)
 		if product_form.is_valid():
 			product_form.save()
 			messages.success(request, "Created Product Successfully!")
@@ -120,7 +124,7 @@ def edit_product(request: HttpRequest, product_id):
 	categories = Category.objects.all()
 	product = Product.objects.get(pk=product_id)
 	if request.method == "POST":
-		product_form = ProductForm(request.POST, instance=product)
+		product_form = ProductForm(request.POST,request.FILES ,instance=product)
 		if product_form.is_valid():
 			product_form.save()
 			messages.success(request, "Edit Product Successfully!")

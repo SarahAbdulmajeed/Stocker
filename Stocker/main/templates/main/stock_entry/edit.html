@@ -25,7 +25,7 @@
 </div>
 
 <!-- Add Form -->
-<form class="max-w-sm mx-auto" action="{% url 'main:add_stock_entry'%}" method="post">
+<form class="max-w-sm mx-auto" action="{% url 'main:edit_stock_entry' stock_entry.id %}" method="post">
     {% csrf_token %}
     <div class="mb-5">
         <label for="product" class="block mb-2 text-sm font-medium text-gray-900">Product</label>
@@ -66,7 +66,7 @@
         </div>
         <div>
             <label for="expiry_date" class="block mb-2 text-sm font-medium text-gray-900">Expiry Date</label>
-            <input value="{{ stock_entry.expiry_date|date:'Y-m-d' }}" type="date"  name="expiry_date" id="expiry_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[--jaffa-90] focus:border-[--jaffa-90] block w-full p-2.5" placeholder="Product Name" required>
+            <input value="{{ stock_entry.expiry_date|date:'Y-m-d' }}" type="date"  name="expiry_date" id="expiry_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[--jaffa-90] focus:border-[--jaffa-90] block w-full p-2.5" placeholder="Product Name" >
         </div>
     </div>
 
