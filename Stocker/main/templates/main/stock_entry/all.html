@@ -2,15 +2,15 @@
 {% block content %}
 
 <div>
-    <h3 class="text-3xl font-semibold">Products</h3>
+    <h3 class="text-3xl font-semibold">Stock Entries</h3>
 </div>
 
 
 <div class="sm:w-64 w-full my-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm justify-self-center text-center">
     <a href="#">
-        <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900">Total Products</h5>
+        <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900">Total Stock Entries</h5>
     </a>
-    <p class="mb-3 text-4xl font-normal text-gray-500">{{total_products}}</p>
+    <p class="mb-3 text-4xl font-normal text-gray-500">{{total_stock_entries}}</p>
 </div>
 
 <div class="flex flex-row my-2 justify-self-end gap-2">
@@ -24,24 +24,34 @@
         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-center">Product </th>
+                    <th scope="col" class="px-6 py-3 text-center">Product</th>
                     <th scope="col" class="px-6 py-3 text-center">Category</th>
+                    <th scope="col" class="px-6 py-3 text-center">Supplier</th>
+                    <th scope="col" class="px-6 py-3 text-center">quantity</th>
+                    <th scope="col" class="px-6 py-3 text-center">expiry_date</th>
+                    <th scope="col" class="px-6 py-3 text-center">received_date</th>
+                    <th scope="col" class="px-6 py-3 text-center">unit_cost</th>
                     <th scope="col" class="px-6 py-3 text-center">Action</th>
                 </tr>
             </thead>
             <tbody>
-                {% for product in products  %}
+                {% for stock_entry in stock_entries  %}
                 <tr class="bg-white border-b border-gray-200 hover:bg-gray-50 text-center">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ product.name }}</th>
-                    <td class="px-6 py-4">{{ product.category.name }}</td>
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ stock_entry.product.name }}</th>
+                    <td class="px-6 py-4">{{ stock_entry.product.category.name }}</td>
+                    <td class="px-6 py-4">{{ stock_entry.supplier.name }}</td>
+                    <td class="px-6 py-4">{{ stock_entry.quantity }}</td>
+                    <td class="px-6 py-4">{{ stock_entry.expiry_date }}</td>
+                    <td class="px-6 py-4">{{ stock_entry.received_at }}</td>
+                    <td class="px-6 py-4">{{ stock_entry.unit_cost }}</td>
                     <td class="px-6 py-4 flex flex-row gap-2 justify-center">
-                        <a href="{% url 'main:edit_product' product.id %}" class="hover:text-[--jaffa-90]">
+                        <a href="{% url 'main:edit_stock_entry' stock_entry.id %}" class="hover:text-[--jaffa-90]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                                 <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
                                 <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
                             </svg>
                         </a>
-                        <a href="{% url 'main:delete_product' product.id %}" class="hover:text-[--jaffa-90]">
+                        <a href="{% url 'main:delete_stock_entry' stock_entry.id %}" class="hover:text-[--jaffa-90]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                                 <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
                             </svg>
@@ -54,28 +64,28 @@
 
         <nav class="m-2 flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
             <span class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                Showing <span class="font-semibold text-gray-900">{{ products.number }}</span> of 
-                <span class="font-semibold text-gray-900">{{ products.paginator.num_pages }}</span>
+                Showing <span class="font-semibold text-gray-900">{{ stock_entries.number }}</span> of 
+                <span class="font-semibold text-gray-900">{{ stock_entries.paginator.num_pages }}</span>
             </span>
             <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                 <!-- Previous -->
-                {% if products.has_previous %}
+                {% if stock_entries.has_previous %}
                     <li><a href="?page=1" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">First</a></li>
-                    <li><a href="?page={{ products.previous_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Previous</a></li>
+                    <li><a href="?page={{ stock_entries.previous_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Previous</a></li>
                 {% endif %}
 
                 <!-- Page Numbers -->
-                {% for num in products.paginator.page_range %}
-                    {% if products.number == num %}
+                {% for num in stock_entries.paginator.page_range %}
+                    {% if stock_entries.number == num %}
                         <li><span class="flex items-center justify-center px-3 h-8 text-gray-900 border border-gray-300 bg-gray-50">{{ num }}</span></li>
                     {% else %}
                         <li><a href="?page={{ num }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ num }}</a></li>
                     {% endif %}
                 {% endfor %}
                 <!-- Next -->
-                {% if products.has_next %}
-                    <li><a href="?page={{ products.next_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Next</a> </li>
-                    <li><a href="?page={{ products.paginator.num_pages }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Last</a> </li>
+                {% if stock_entries.has_next %}
+                    <li><a href="?page={{ stock_entries.next_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Next</a> </li>
+                    <li><a href="?page={{ stock_entries.paginator.num_pages }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Last</a> </li>
                 {% endif %}
             </ul>
         </nav>

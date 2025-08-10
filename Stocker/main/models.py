@@ -23,6 +23,7 @@ class StockEntry(models.Model):
     supplier = models.ForeignKey(Supplier,on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     expiry_date = models.DateField()
-    received_date = models.DateField()
+    received_at = models.DateTimeField(blank=True, null=True)
     unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

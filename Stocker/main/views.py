@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse 
 from django.contrib import messages
 from django.contrib.auth.decorators	import login_required
-from .models import Category, Supplier, Product
-from .forms import CategoryForm, SupplierForm, ProductForm
+from .models import Category, Supplier, Product, StockEntry
+from .forms import CategoryForm, SupplierForm, ProductForm, StockEntryForm
 from django.core.paginator import Paginator 
 
 
@@ -137,3 +137,50 @@ def delete_product(request: HttpRequest, product_id):
 		messages.success(request, "Product Deleted Successfully!")
 		return redirect("main:products_view")
 	return render(request, "main/product/delete.html",{"product":product, 'categories':categories})
+
+#===========[Stock Entry]===========
+def stock_entries_view(request: HttpRequest):
+	stock_entries = StockEntry.objects.all()
+	total_stock_entries = stock_entries.count()
+	page_number = request.GET.get("page",1)
+	paginator = Paginator(stock_entries,7)
+	products_page = paginator.get_page(page_number)
+	return render(request, "main/stock_entry/all.html", {'stock_entries':products_page, 'total_stock_entries':total_stock_entries})
+
+def add_stock_entry(request: HttpRequest):
+	products = Product.objects.all()
+	suppliers = Supplier.objects.all()
+	if request.method == "POST":
+		stock_entry_form = StockEntryForm(request.POST)
+		if stock_entry_form.is_valid():
+			stock_entry_form.save()
+			messages.success(request, "Created Stock Entry Successfully!")
+			return redirect('main:stock_entries_view')
+		else:
+			messages.error(request, "Please fix the errors below.")
+			print(stock_entry_form.errors)
+	return render(request, "main/stock_entry/add.html", {'products':products, 'suppliers':suppliers})
+
+def edit_stock_entry(request: HttpRequest, stock_entry_id):
+	products = Product.objects.all()
+	suppliers = Supplier.objects.all()
+	stock_entry = StockEntry.objects.get(pk=stock_entry_id)
+	if request.method == "POST":
+		stock_entry_form = ProductForm(request.POST, instance=stock_entry)
+		if stock_entry_form.is_valid():
+			stock_entry_form.save()
+			messages.success(request, "Edit Stock Entry Successfully!")
+			return redirect("main:stock_entries_view")
+		else:
+			print(stock_entry_form.errors)
+	return render(request, "main/stock_entry/edit.html",{"stock_entry":stock_entry, 'products':products, 'suppliers':suppliers})
+
+def delete_stock_entry(request: HttpRequest, stock_entry_id):
+	products = Product.objects.all()
+	suppliers = Supplier.objects.all()
+	stock_entry = StockEntry.objects.get(pk=stock_entry_id)
+	if request.method == "POST":
+		stock_entry.delete()
+		messages.success(request, "Stock Entry Deleted Successfully!")
+		return redirect("main:stock_entries_view")
+	return render(request, "main/stock_entry/delete.html",{"stock_entry":stock_entry, 'products':products, 'suppliers':suppliers})
