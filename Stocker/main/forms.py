@@ -16,4 +16,4 @@ class ProductForm(forms.ModelForm):
 class StockEntryForm(forms.ModelForm):
     class Meta:
         model = StockEntry
-        fields = "__all__"
+        fields = ['product', 'supplier', 'quantity', 'expiry_date', 'received_at', 'unit_cost', 'description']

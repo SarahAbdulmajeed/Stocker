@@ -13,8 +13,22 @@
     <p class="mb-3 text-4xl font-normal text-gray-500">{{total_stock_entries}}</p>
 </div>
 
-<div class="flex flex-row my-2 justify-self-end gap-2">
-    <a href="{% url 'main:add_stock_entry' %}"><button class="block text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">New Stock Entry</button></a>
+<div class="flex md:flex-row flex-col justify-between items-center mb-2 md:w-auto w-[100%] gap-2">
+    <div>
+        <form action="{% url 'main:stock_entries_view' %}" method="GET" >
+            <div class="flex sm:flex-row flex-col gap-2 w-96 items-center">
+                <input placeholder="Search by name..." type="search" class="py-2 px-2 border border-gray-300 rounded-full md:w-auto w-full" value="{{request.GET.search}}" name="search" />
+                <select name="order_by" class="px-8 py-2.5 text-sm bg-[--jaffa-30] rounded-full md:w-auto w-full">
+                    <option value="">Order By</option>
+                    <option value="category" {% if request.GET.order_by == 'category'%} selected {% endif %}>Category</option>
+                    <option value="supplier" {% if request.GET.order_by == 'supplier'%} selected {% endif %}>Supplier</option>
+                </select>
+                <input type="submit" value="Apply" class="px-5 py-2.5 bg-[--jaffa-90] text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-full text-sm text-center md:w-auto w-full"/>
+            </div>
+        </form>
+    </div>
+    <a href="{% url 'main:add_stock_entry' %}"><button class="block text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">Add Stock Entry</button></a>
+    <a href="{% url 'main:add_stock_entry' %}"><button class="block text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">Add Stock Entry</button></a>
 </div>
 
 <!-- Products Table -->
@@ -26,10 +40,10 @@
                     <th scope="col" class="px-6 py-3 text-center">Product</th>
                     <th scope="col" class="px-6 py-3 text-center">Category</th>
                     <th scope="col" class="px-6 py-3 text-center">Supplier</th>
-                    <th scope="col" class="px-6 py-3 text-center">quantity</th>
-                    <th scope="col" class="px-6 py-3 text-center">expiry_date</th>
-                    <th scope="col" class="px-6 py-3 text-center">received_date</th>
-                    <th scope="col" class="px-6 py-3 text-center">unit_cost</th>
+                    <th scope="col" class="px-6 py-3 text-center">Qty.</th>
+                    <th scope="col" class="px-6 py-3 text-center">Expiry Date</th>
+                    <th scope="col" class="px-6 py-3 text-center">Received Date</th>
+                    <th scope="col" class="px-6 py-3 text-center">Unit Cost</th>
                     <th scope="col" class="px-6 py-3 text-center">Action</th>
                 </tr>
             </thead>
@@ -44,6 +58,11 @@
                     <td class="px-6 py-4">{{ stock_entry.received_at }}</td>
                     <td class="px-6 py-4">{{ stock_entry.unit_cost }}</td>
                     <td class="px-6 py-4 flex flex-row gap-2 justify-center">
+                        <a href="{% url 'main:withdraw_stock_entry' stock_entry.id %}" class="hover:text-[--jaffa-90]">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                                <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
                         <a href="{% url 'main:edit_stock_entry' stock_entry.id %}" class="hover:text-[--jaffa-90]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                                 <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />

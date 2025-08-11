@@ -25,5 +25,6 @@ urlpatterns = [
     path('stock_entry/', views.stock_entries_view, name='stock_entries_view'),
     path('stock_entry/add/', views.add_stock_entry, name='add_stock_entry'),
     path('stock_entry/edit/<stock_entry_id>', views.edit_stock_entry, name='edit_stock_entry'),
+    path('stock_entry/withdraw/<stock_entry_id>', views.withdraw_stock_entry, name='withdraw_stock_entry'),
     path('stock_entry/delete/<stock_entry_id>', views.delete_stock_entry, name='delete_stock_entry'),
 ] 

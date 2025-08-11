@@ -1,5 +1,6 @@
 {% extends 'main/base_emp.html'%}
 
+{% block title %} Edit Product {% endblock %}
 
 {% block content %}
 
@@ -59,7 +60,7 @@
   <!-- Image -->
   <div class="mb-5">
     <label class="block mb-2 text-sm font-medium text-gray-900" for="image">Product Image</label>
-    <img class="my-4" src="{{ product.image.url }}" alt="product image">
+    <img class="my-4 rounded-lg" src="{{ product.image.url }}" alt="product image">
     <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" name="image" id="image" type="file">
     <p class="mt-1 text-sm text-gray-500" >WEBG, PNG, and JPG.</p>
   </div>

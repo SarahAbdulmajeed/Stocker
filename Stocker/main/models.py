@@ -25,9 +25,16 @@ class Product(models.Model):
 class StockEntry(models.Model):
     product = models.ForeignKey(Product,on_delete=models.PROTECT)
     supplier = models.ForeignKey(Supplier,on_delete=models.PROTECT)
+    initial_quantity = models.PositiveIntegerField(editable=False, default=0)
     quantity = models.PositiveIntegerField()
     expiry_date = models.DateField(blank=True, null=True)
     received_at = models.DateTimeField(blank=True, null=True)
     unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.initial_quantity = self.quantity
+        super().save(*args, **kwargs)
+

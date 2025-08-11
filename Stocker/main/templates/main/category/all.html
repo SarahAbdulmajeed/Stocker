@@ -1,6 +1,6 @@
 {% extends 'main/base_emp.html'%}
+{% block title %} All Categories {% endblock %}
 {% block content %}
-
 <div>
     <h3 class="text-3xl font-semibold">Categories</h3>
 </div>
@@ -13,7 +13,15 @@
     <p class="mb-3 text-4xl font-normal text-gray-500">{{total_categories}}</p>
 </div>
 
-<div class="flex flex-row my-2 justify-self-end">
+<div class="flex sm:flex-row flex-col justify-between items-center mb-2 sm:w-auto sm:gap-2 gap-5">
+    <div>
+        <form action="{% url 'main:categories_view' %}" method="GET" >
+            <div class="flex sm:flex-row flex-col gap-2 w-96 items-center">
+                <input placeholder="Search by name ..." type="search" class="py-2 px-2 border border-gray-300 rounded-full sm:w-auto w-full" value="{{request.GET.search}}" name="search" />
+                <input type="submit" value="Apply" class="px-5 py-2.5 bg-[--jaffa-90] text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-full text-sm text-center sm:w-auto w-full"/>
+            </div>
+        </form>
+    </div>
     <a href="{% url 'main:add_category' %}"><button class="block text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">New Category</button></a>
 </div>
 

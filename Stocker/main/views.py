@@ -6,7 +6,7 @@ from .models import Category, Supplier, Product, StockEntry
 from .forms import CategoryForm, SupplierForm, ProductForm, StockEntryForm
 from django.core.paginator import Paginator 
 from django.db.models import Sum
-
+from django.db.models import Q
 
 
 def home_view(request: HttpRequest):
@@ -18,6 +18,8 @@ def dashboard_view(request: HttpRequest):
 #===========[Category]===========
 def categories_view(request: HttpRequest):
 	categories = Category.objects.all()
+	if 'search' in request.GET:
+		categories = categories.filter(Q(name__contains=request.GET['search']))
 	total_categories = categories.count()
 	page_number = request.GET.get("page",1)
 	paginator = Paginator(categories,7)
@@ -58,6 +60,8 @@ def delete_category(request: HttpRequest, category_id):
 #===========[Supplier]===========
 def suppliers_view(request: HttpRequest):
 	suppliers = Supplier.objects.all()
+	if 'search' in request.GET:
+		suppliers = suppliers.filter(Q(name__contains=request.GET['search']))
 	total_suppliers = suppliers.count()
 	page_number = request.GET.get("page",1)
 	paginator = Paginator(suppliers,7)
@@ -97,11 +101,21 @@ def delete_supplier(request: HttpRequest, supplier_id):
 
 #===========[Product]===========
 def products_view(request: HttpRequest):
-	products = Product.objects.all()
-	products = Product.objects.annotate(total_qty=Sum('stockentry__quantity')
-)
+	products = Product.objects.annotate(total_qty=Sum('stockentry__quantity'))
 
-	total_products = products.count()
+	if 'search' in request.GET:
+		search = request.GET['search']
+		products = products.filter(Q(name__contains=search) | Q(sku__contains=search))
+		if "order_by" in request.GET and request.GET["order_by"] == "category":
+			products = products.order_by("-category")
+		elif "order_by" in request.GET and request.GET["order_by"] == "created_at":
+			products = products.order_by("-created_at")
+
+	if products:
+		total_products = products.count()
+	else:
+		total_products = 0
+	
 	page_number = request.GET.get("page",1)
 	paginator = Paginator(products,7)
 	products_page = paginator.get_page(page_number)
@@ -145,6 +159,13 @@ def delete_product(request: HttpRequest, product_id):
 #===========[Stock Entry]===========
 def stock_entries_view(request: HttpRequest):
 	stock_entries = StockEntry.objects.all()
+	if 'search' in request.GET:
+		search = request.GET['search']
+		stock_entries = stock_entries.filter(product__name__contains=search)
+		if "order_by" in request.GET and request.GET["order_by"] == "category":
+			stock_entries = stock_entries.order_by("-product__category__name")
+		elif "order_by" in request.GET and request.GET["order_by"] == "supplier":
+			stock_entries = stock_entries.order_by("-supplier__name")
 	total_stock_entries = stock_entries.count()
 	page_number = request.GET.get("page",1)
 	paginator = Paginator(stock_entries,7)
@@ -170,7 +191,7 @@ def edit_stock_entry(request: HttpRequest, stock_entry_id):
 	suppliers = Supplier.objects.all()
 	stock_entry = StockEntry.objects.get(pk=stock_entry_id)
 	if request.method == "POST":
-		stock_entry_form = ProductForm(request.POST, instance=stock_entry)
+		stock_entry_form = StockEntryForm(request.POST, instance=stock_entry)
 		if stock_entry_form.is_valid():
 			stock_entry_form.save()
 			messages.success(request, "Edit Stock Entry Successfully!")
@@ -178,6 +199,11 @@ def edit_stock_entry(request: HttpRequest, stock_entry_id):
 		else:
 			print(stock_entry_form.errors)
 	return render(request, "main/stock_entry/edit.html",{"stock_entry":stock_entry, 'products':products, 'suppliers':suppliers})
+
+def withdraw_stock_entry(request: HttpRequest, stock_entry_id):
+	stock_entry = StockEntry.objects.get(pk=stock_entry_id)
+	return render(request, "main/stock_entry/withdraw.html", {'stock_entry':stock_entry})
+
 
 def delete_stock_entry(request: HttpRequest, stock_entry_id):
 	products = Product.objects.all()
