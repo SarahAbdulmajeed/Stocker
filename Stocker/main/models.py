@@ -21,6 +21,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to="images/products/", default="images/products/default.png")
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    low_stock_notified = models.BooleanField(default=False)
 
 class StockEntry(models.Model):
     product = models.ForeignKey(Product,on_delete=models.PROTECT)
@@ -32,9 +33,25 @@ class StockEntry(models.Model):
     unit_cost = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    expiry_notified = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
             self.initial_quantity = self.quantity
         super().save(*args, **kwargs)
 
+class StockWithdrawal(models.Model):
+    REASON_CHOICES = [
+        ("SALE", "Sale"),
+        ("DAMAGE", "Damage"),
+        ("RETURN", "Return to supplier"),
+        ("ADJUST", "Inventory adjust"),
+        ("OTHER", "Other"),
+    ]
+
+    stock_entry = models.ForeignKey(StockEntry,on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, editable=False)
+    quantity = models.PositiveIntegerField()
+    reason = models.CharField(max_length=12, choices=REASON_CHOICES, default="SALE")
+    note = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

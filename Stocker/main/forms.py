@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Supplier, Product, StockEntry
+from .models import Category, Supplier, Product, StockEntry, StockWithdrawal
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -17,3 +17,7 @@ class StockEntryForm(forms.ModelForm):
     class Meta:
         model = StockEntry
         fields = ['product', 'supplier', 'quantity', 'expiry_date', 'received_at', 'unit_cost', 'description']
+class StockWithdrawalForm(forms.ModelForm):
+    class Meta:
+        model = StockWithdrawal
+        fields = ['quantity', 'reason', 'note']

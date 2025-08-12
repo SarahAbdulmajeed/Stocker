@@ -17,16 +17,15 @@
             <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
             </svg>
-            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Edit Stock Entry</span>
+            <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Withdraw Stock Entry</span>
         </div>
         </li>
     </ol>
     </nav>
 </div>
 
-<!-- Form -->
-<form class="max-w-sm mx-auto" action="{% url 'main:edit_stock_entry' stock_entry.id %}" method="post">
-    {% csrf_token %}
+<!-- Informations -->
+<div class="max-w-sm mx-auto" >
     <div class="mb-5">
         <label class="block mb-2 text-sm font-medium text-gray-900">Product</label>
         <label class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">{{stock_entry.product.name}}</label>
@@ -68,7 +67,45 @@
         <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Description</label>
         <label class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">{% if stock_entry.description == ""  %} (No Description) {% else %} {{stock_entry.description}} {% endif %}</label>
     </div>
+</div>
 
-  <button type="submit" class="text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center">Edit Stock</button>
+    <!-- Form -->
+<!-- Form -->
+<form class="max-w-sm mx-auto" action="{% url 'main:withdraw_stock_entry' stock_entry.id %}" method="post">
+    {% csrf_token %}
+
+    <!-- Quantity -->
+    <div class="mb-5">
+        <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900">Quantity to Withdraw</label>
+        <input type="number" name="quantity" id="quantity" min="1" max="{{ stock_entry.quantity }}"
+               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[--jaffa-30] focus:border-[--jaffa-90] block w-full p-2.5"
+               placeholder="Enter quantity" required>
+    </div>
+
+    <!-- Reason -->
+    <div class="mb-5">
+        <label for="reason" class="block mb-2 text-sm font-medium text-gray-900">Reason</label>
+        <select name="reason" id="reason"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[--jaffa-30] focus:border-[--jaffa-90] block w-full p-2.5">
+            <option value="SALE">Sale</option>
+            <option value="DAMAGE">Damage</option>
+            <option value="RETURN">Return to supplier</option>
+            <option value="ADJUST">Inventory adjust</option>
+            <option value="OTHER">Other</option>
+        </select>
+    </div>
+
+    <!-- Note -->
+    <div class="mb-5">
+        <label for="note" class="block mb-2 text-sm font-medium text-gray-900">Note (optional)</label>
+        <textarea name="note" id="note" rows="2"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[--jaffa-30] focus:border-[--jaffa-90] block w-full p-2.5"
+                  placeholder="Add any notes if needed"></textarea>
+    </div>
+
+    <button type="submit"
+            class="text-white bg-[--jaffa-90] hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+        Withdraw Stock
+    </button>
 </form>
 {% endblock %}

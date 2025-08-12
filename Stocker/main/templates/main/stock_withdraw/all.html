@@ -1,0 +1,98 @@
+{% extends 'main/base_emp.html'%}
+{% block title %} All Withdrawals {% endblock %}
+{% block content %}
+
+<!-- Title -->
+<div>
+  <h3 class="text-3xl font-semibold">Stock Withdrawals</h3>
+</div>
+
+<!-- Total Card -->
+<div class="sm:w-64 w-full my-8 p-6 bg-white border border-gray-200 rounded-lg shadow-sm justify-self-center text-center">
+  <h5 class="mb-2 text-xl font-semibold tracking-tight text-gray-900">Total Withdrawals</h5>
+  <p class="mb-3 text-4xl font-normal text-gray-500">{{ total_withdrawals }}</p>
+</div>
+
+<!-- Filters / Actions -->
+<div class="flex md:flex-row flex-col justify-between items-center mb-2 md:w-auto w-[100%] gap-2">
+  <div>
+    <form action="{% url 'main:withdrawals_view' %}" method="GET">
+      <div class="flex sm:flex-row flex-col gap-2 w-96 items-center">
+        <input placeholder="Search by product..." type="search" class="py-2 px-2 border border-gray-300 rounded-full md:w-auto w-full" value="{{request.GET.search}}" name="search" />
+        <select name="order_by" class="px-8 py-2.5 text-sm bg-[--jaffa-30] rounded-full md:w-auto w-full">
+          <option value="">Order By</option>
+          <option value="date" {% if request.GET.order_by == 'date' %}selected{% endif %}>Date</option>
+          <option value="product" {% if request.GET.order_by == 'product' %}selected{% endif %}>Product</option>
+          <option value="supplier" {% if request.GET.order_by == 'supplier' %}selected{% endif %}>Supplier</option>
+          <option value="reason" {% if request.GET.order_by == 'reason' %}selected{% endif %}>Reason</option>
+        </select>
+        <input type="submit" value="Apply" class="px-5 py-2.5 bg-[--jaffa-90] text-white hover:bg-[--jaffa-300] focus:ring-4 focus:outline-none focus:ring-[--jaffa-30] font-medium rounded-full text-sm text-center md:w-auto w-full"/>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Withdrawals Table -->
+<div>
+  <div class="relative overflow-x-auto border border-[--gray-dark] rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-center">Product</th>
+          <th scope="col" class="px-6 py-3 text-center">Category</th>
+          <th scope="col" class="px-6 py-3 text-center">Supplier</th>
+          <th scope="col" class="px-6 py-3 text-center">Qty.</th>
+          <th scope="col" class="px-6 py-3 text-center">Reason</th>
+          <th scope="col" class="px-6 py-3 text-center">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for w in withdrawals %}
+        <tr class="bg-white border-b border-gray-200 hover:bg-gray-50 text-center">
+          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            {{ w.product.name }}
+          </th>
+          <td class="px-6 py-4">{{ w.product.category.name }}</td>
+          <td class="px-6 py-4">{{ w.stock_entry.supplier.name }}</td>
+          <td class="px-6 py-4">{{ w.quantity }}</td>
+          <td class="px-6 py-4">{{ w.get_reason_display }}</td>
+          <td class="px-6 py-4">{{ w.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" class="px-6 py-6 text-center text-gray-500">No withdrawals yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav class="m-2 flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
+      <span class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+        Showing <span class="font-semibold text-gray-900">{{ withdrawals.number }}</span> of
+        <span class="font-semibold text-gray-900">{{ withdrawals.paginator.num_pages }}</span>
+      </span>
+      <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+        {% if withdrawals.has_previous %}
+          <li><a href="?page=1" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">First</a></li>
+          <li><a href="?page={{ withdrawals.previous_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Previous</a></li>
+        {% endif %}
+
+        {% for num in withdrawals.paginator.page_range %}
+          {% if withdrawals.number == num %}
+            <li><span class="flex items-center justify-center px-3 h-8 text-gray-900 border border-gray-300 bg-gray-50">{{ num }}</span></li>
+          {% else %}
+            <li><a href="?page={{ num }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if withdrawals.has_next %}
+          <li><a href="?page={{ withdrawals.next_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Next</a></li>
+          <li><a href="?page={{ withdrawals.paginator.num_pages }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Last</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'main/base_emp.html'%}
+{% block title %} Supplier Report {% endblock %}
+{% block content %}
+
+<h3 class="text-3xl font-semibold mb-6">Supplier Report</h3>
+
+<form method="get" class="flex flex-wrap gap-2 items-center mb-4">
+  <input type="search" name="search" value="{{ request.GET.search }}" placeholder="Search supplier..."
+         class="py-2 px-2 border border-gray-300 rounded-full" />
+  <select name="order_by" class="px-4 py-2 text-sm bg-[--jaffa-30] rounded-full">
+    <option value="">Order By</option>
+    <option value="current" {% if request.GET.order_by == 'current' %}selected{% endif %}>Current Stock</option>
+    <option value="in"      {% if request.GET.order_by == 'in' %}selected{% endif %}>IN Qty</option>
+    <option value="out"     {% if request.GET.order_by == 'out' %}selected{% endif %}>OUT Qty</option>
+  </select>
+  <button class="px-5 py-2.5 bg-[--jaffa-90] text-white rounded-full">Apply</button>
+</form>
+
+<div class="mb-6 p-4 bg-white border rounded-lg">
+  <div class="text-sm text-gray-500">Total Suppliers</div>
+  <div class="text-3xl font-semibold text-gray-900">{{ total_suppliers }}</div>
+</div>
+
+<div class="relative overflow-x-auto border rounded-lg">
+  <table class="w-full text-sm text-left text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+      <tr>
+        <th class="px-6 py-3">Supplier</th>
+        <th class="px-6 py-3">Current Stock</th>
+        <th class="px-6 py-3">IN (range)</th>
+        <th class="px-6 py-3">OUT (range)</th>
+        <th class="px-6 py-3">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in suppliers %}
+      <tr class="bg-white border-b hover:bg-gray-50">
+        <td class="px-6 py-3">{{ s.name }}</td>
+        <td class="px-6 py-3">{{ s.current_stock }}</td>
+        <td class="px-6 py-3">{{ s.in_qty }}</td>
+        <td class="px-6 py-3">{{ s.out_qty }}</td>
+        <td class="px-6 py-3">
+          <a href="{% url 'main:supplier_detail' s.id %}" class="text-[--jaffa-90] hover:underline">View</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="px-6 py-6 text-center text-gray-500">No data.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- pagination -->
+        <nav class="m-2 flex items-center flex-column flex-wrap md:flex-row justify-between pt-4" aria-label="Table navigation">
+            <span class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                Showing <span class="font-semibold text-gray-900">{{ products.number }}</span> of 
+                <span class="font-semibold text-gray-900">{{ products.paginator.num_pages }}</span>
+            </span>
+            <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                <!-- Previous -->
+                {% if products.has_previous %}
+                    <li><a href="?page=1" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">First</a></li>
+                    <li><a href="?page={{ products.previous_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Previous</a></li>
+                {% endif %}
+
+                <!-- Page Numbers -->
+                {% for num in products.paginator.page_range %}
+                    {% if products.number == num %}
+                        <li><span class="flex items-center justify-center px-3 h-8 text-gray-900 border border-gray-300 bg-gray-50">{{ num }}</span></li>
+                    {% else %}
+                        <li><a href="?page={{ num }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <!-- Next -->
+                {% if products.has_next %}
+                    <li><a href="?page={{ products.next_page_number }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">Next</a> </li>
+                    <li><a href="?page={{ products.paginator.num_pages }}" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">Last</a> </li>
+                {% endif %}
+            </ul>
+        </nav>
+</div>
+{% endblock %}

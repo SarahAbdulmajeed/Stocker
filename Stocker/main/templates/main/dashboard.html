@@ -1,9 +1,154 @@
 {% extends 'main/base_emp.html'%}
-{% block content %}
-    {% if request.user.is_authenticated %} 
-    here is the dashboard 
-    <br>
-    {{request.user.username}}
-    {% endif %}
-{% endblock %}
+{% block title %} Dashboard {% endblock %}
 
+{% block content %}
+
+<!-- Title -->
+<div class="mb-8">
+  <h2 class="text-3xl font-semibold">Dashboard</h2>
+</div>
+
+<!-- KPI cards -->
+<div class="grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
+  <div class="p-5 bg-white border rounded-lg">
+    <div class="text-sm text-gray-500">Products</div>
+    <div class="text-3xl font-semibold text-gray-900">{{ total_products }}</div>
+  </div>
+  <div class="p-5 bg-white border rounded-lg">
+    <div class="text-sm text-gray-500">Categories</div>
+    <div class="text-3xl font-semibold text-gray-900">{{ total_categories }}</div>
+  </div>
+  <div class="p-5 bg-white border rounded-lg">
+    <div class="text-sm text-gray-500">Suppliers</div>
+    <div class="text-3xl font-semibold text-gray-900">{{ total_suppliers }}</div>
+  </div>
+  <div class="p-5 bg-white border rounded-lg">
+    <div class="text-sm text-gray-500">Total Stock (Units)</div>
+    <div class="text-3xl font-semibold text-gray-900">{{ total_stock_qty }}</div>
+  </div>
+</div>
+
+<!-- Alerts -->
+{% if low_stock_count and low_stock_count > 0 %}
+<div class="mb-8 p-4 border rounded-lg bg-red-50 border-red-200 text-red-700">
+  {{ low_stock_count }} product(s) are below reorder level.
+</div>
+{% endif %}
+
+<!-- Two columns -->
+<div class="grid md:grid-cols-2 grid-cols-1 gap-6">
+
+  <!-- Recent Stock Entries -->
+  <div class="bg-white border rounded-lg overflow-hidden">
+    <div class="px-5 py-4 border-b flex items-center justify-between">
+      <h3 class="font-semibold text-gray-900">Recent Stock Entries</h3>
+      <a href="{% url 'main:stock_entries_view' %}" class="text-[--jaffa-90] text-sm hover:underline">View all</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-5 py-3">Product</th>
+            <th class="text-left px-5 py-3">Supplier</th>
+            <th class="text-left px-5 py-3">Qty</th>
+            <th class="text-left px-5 py-3">Cost</th>
+            <th class="text-left px-5 py-3">Received</th>
+            <th class="text-right px-5 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in recent_entries %}
+          <tr class="border-t">
+            <td class="px-5 py-3">{{ e.product.name }}</td>
+            <td class="px-5 py-3">{{ e.supplier.name }}</td>
+            <td class="px-5 py-3">{{ e.quantity }}</td>
+            <td class="px-5 py-3">{{ e.unit_cost }}</td>
+            <td class="px-5 py-3">{{ e.received_at|date:"Y-m-d H:i" }}</td>
+            <td class="px-5 py-3 text-right">
+              <a href="{% url 'main:withdraw_stock_entry' e.id %}" class="text-[--jaffa-90] hover:underline">Withdraw</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" class="px-5 py-6 text-center text-gray-500">No entries.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Withdrawals -->
+  <div class="bg-white border rounded-lg overflow-hidden">
+    <div class="px-5 py-4 border-b flex items-center justify-between">
+      <h3 class="font-semibold text-gray-900">Recent Withdrawals</h3>
+      <a href="{% url 'main:withdrawals_view' %}" class="text-[--jaffa-90] text-sm hover:underline">View all</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 text-gray-600">
+          <tr>
+            <th class="text-left px-5 py-3">Product</th>
+            <th class="text-left px-5 py-3">Supplier</th>
+            <th class="text-left px-5 py-3">Qty</th>
+            <th class="text-left px-5 py-3">Reason</th>
+            <th class="text-left px-5 py-3">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for w in recent_withdrawals %}
+          <tr class="border-t">
+            <td class="px-5 py-3">{{ w.product.name }}</td>
+            <td class="px-5 py-3">{{ w.stock_entry.supplier.name }}</td>
+            <td class="px-5 py-3">{{ w.quantity }}</td>
+            <td class="px-5 py-3">{{ w.get_reason_display }}</td>
+            <td class="px-5 py-3">{{ w.created_at|date:"Y-m-d H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="px-5 py-6 text-center text-gray-500">No withdrawals.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Top lists -->
+<div class="grid md:grid-cols-2 grid-cols-1 gap-6 mt-8">
+
+  <!-- Top Categories by Stock -->
+  <div class="bg-white border rounded-lg overflow-hidden">
+    <div class="px-5 py-4 border-b"><h3 class="font-semibold text-gray-900">Top Categories (by stock)</h3></div>
+    <div class="p-5">
+      <ul class="divide-y">
+        {% for c in top_categories %}
+        <li class="py-3 flex items-center justify-between">
+          <span class="text-gray-800">{{ c.name }}</span>
+          <span class="text-gray-900 font-semibold">{{ c.qty }}</span>
+        </li>
+        {% empty %}
+        <li class="py-6 text-center text-gray-500">No data.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Top Suppliers by Stock -->
+  <div class="bg-white border rounded-lg overflow-hidden">
+    <div class="px-5 py-4 border-b"><h3 class="font-semibold text-gray-900">Top Suppliers (by stock)</h3></div>
+    <div class="p-5">
+      <ul class="divide-y">
+        {% for s in top_suppliers %}
+        <li class="py-3 flex items-center justify-between">
+          <span class="text-gray-800">{{ s.name }}</span>
+          <span class="text-gray-900 font-semibold">{{ s.qty }}</span>
+        </li>
+        {% empty %}
+        <li class="py-6 text-center text-gray-500">No data.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

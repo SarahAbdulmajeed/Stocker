@@ -1,0 +1,17 @@
+{% extends 'main/base_emp.html' %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Approve User</h2>
+<div class="bg-white border rounded-lg p-4 max-w-md">
+  <div class="mb-3">Username: <span class="font-semibold">{{ user.username }}</span></div>
+  <div class="mb-3">Email: <span class="font-semibold">{{ user.email }}</span></div>
+  <form method="post">
+    {% csrf_token %}
+    <label class="block mb-2 text-sm text-gray-700">Role</label>
+    <select name="role" class="border rounded px-3 py-2 w-full mb-4">
+      <option value="employee">Employee</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button class="px-5 py-2.5 bg-[--jaffa-90] text-white rounded-lg">Approve</button>
+  </form>
+</div>
+{% endblock %}
